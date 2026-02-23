@@ -1,0 +1,19 @@
+<div class="container" style="text-align: center; padding: 3rem 2rem;">    
+    <p style="color: #666; font-size: 2rem; margin-bottom: 1rem;">
+        <% if (statusCode === 403) { %>
+            403 - Access Denied
+        <% } else if (statusCode === 404) { %>
+            404 - Not Found
+        <% } else { %>
+            <%= statusCode %> - Error
+        <% } %>
+    </p>
+    
+    <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem;">
+        <%= message || 'An error occurred.' %>
+    </p>
+    
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/products" class="btn btn-success">Browse Products</a>
+    </div>
+</div>

@@ -1,0 +1,120 @@
+<div class="container">
+    <h1 style="margin-bottom: 1rem">Orders</h1>
+
+    <% if (isManager) { %>
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <a href="/orders?filter=my" class="btn <% if (currentFilter === 'my') { %>btn-success<% } %>" style="<% if (currentFilter !== 'my') { %>background-color: #6c757d; <% } %>">My Orders</a>
+            <a href="/orders?filter=all" class="btn <% if (currentFilter === 'all') { %>btn-success<% } %>" style="<% if (currentFilter !== 'all') { %>background-color: #6c757d; <% } %>">All Orders</a>
+            <a href="/orders?filter=delivered" class="btn <% if (currentFilter === 'delivered') { %>btn-success<% } %>" style="<% if (currentFilter !== 'delivered') { %>background-color: #6c757d; <% } %>">Delivered</a>
+            <a href="/orders?filter=pending" class="btn <% if (currentFilter === 'pending') { %>btn-success<% } %>" style="<% if (currentFilter !== 'pending') { %>background-color: #6c757d; <% } %>">Pending</a>
+        </div>
+    <% } %>
+
+    <% if (orders && orders.length > 0) { %>
+        <style>
+            @media (max-width: 640px) {
+                .order-header-flex {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: flex-start;
+                }
+                .order-item-grid {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                    align-items: flex-start;
+                }
+            }
+            @media (min-width: 641px) {
+                .order-header-flex {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                }
+                .order-item-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 2fr 1fr;
+                    gap: 1rem;
+                    align-items: center;
+                }
+            }
+        </style>
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <% orders.forEach(order => { %>
+                <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 4px; background-color: #fafafa;">
+                    <div class="order-header-flex" style="margin-bottom: 1rem;">
+                        <div>
+                            <h3>Order #<%= order.id.substring(0, 8) %></h3>
+                            <% if(currentFilter !== "my") { %>
+                            <p style="color: #666; margin: 0.25rem 0;">Ordered by: <%= order.username %> (#<%= order.userId.substring(0, 8) %>)</p>
+                            <% } %>
+                            <p style="color: #666; margin: 0.25rem 0;">Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                            <p style="color: #666; margin: 0.25rem 0;">Status: 
+                                <% if (order.deliveryStatus.status === 'delivered') { %>
+                                    <span style="background-color: #d4edda; color: #155724; padding: 0.25rem 0.5rem; border-radius: 4px;">Delivered on <%= new Date(order.deliveryStatus.date).toLocaleDateString() %></span>
+                                <% } else { %>
+                                    <span style="background-color: #fff3cd; color: #856404; padding: 0.25rem 0.5rem; border-radius: 4px;">Pending</span>
+                                <% } %>
+                            </p>
+                            <% if (order.message) { %>
+                                <p style="color: #666; margin: 0.5rem 0; font-style: italic;">Message: <%= order.message %></p>
+                            <% } %>
+                            <% const total = order.items.reduce((sum, item) => sum + item.product.price * item.quantity, 0); %>
+                            <h4 style="color: #333;">Total: <%= (total / 100).toFixed(2) %> zł</h4>
+                        </div>
+                        <% if (isManager) { %>
+                            <div>
+                                <% if (order.deliveryStatus.status === 'pending') { %>
+                                    <form action="/order/<%= order.id %>/deliver" method="POST" style="display: inline;">
+                                        <input type="hidden" name="filter" value="<%= currentFilter %>">
+                                        <button type="submit" class="btn btn-success" style="width: 150px;">Mark Delivered</button>
+                                    </form>
+                                <% } else { %>
+                                    <form action="/order/<%= order.id %>/pending" method="POST" style="display: inline;">
+                                        <input type="hidden" name="filter" value="<%= currentFilter %>">
+                                        <button type="submit" class="btn" style="width: 150px; background-color: #ffc107; color: #000;">Mark Pending</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <div style="border-top: 1px solid #ddd; padding-top: 1rem;">
+                        <% order.items.forEach(item => { %>
+                            <div class="order-item-grid" style="margin-bottom: 1rem;">
+                                <div>
+                                    <% if (item.product.imageUrl) { %>
+                                        <img src="<%= item.product.imageUrl %>" alt="<%= item.product.name %>" style="width: 100%; max-width: 100px; max-height: 100px; border-radius: 4px;">
+                                    <% } else { %>
+                                        <div style="width: 100px; height: 80px; background-color: #eee; display: flex; align-items: center; justify-content: center; color: #999; border-radius: 4px; font-size: 0.8rem;">
+                                            No Image
+                                        </div>
+                                    <% } %>
+                                </div>
+
+                                <div>
+                                    <h4><%= item.product.name %></h4>
+                                    <p style="color: #666; margin: 0.25rem 0;">Price: <%= (item.product.price / 100).toFixed(2) %> zł</p>
+                                    <p style="color: #666; margin: 0.25rem 0;">Quantity: <%= item.quantity %></p>
+                                    <p style="color: #666; margin: 0.25rem 0; font-weight: bold;">
+                                        Subtotal: <%= ((item.product.price * item.quantity) / 100).toFixed(2) %> zł
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <a href="/productversion/<%= item.productVersionId %>" class="btn">View Product</a>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <div style="text-align: center; padding: 2rem;">
+            <p style="color: #999; font-size: 1.1rem;">No orders found</p>
+            <a href="/products" class="btn">Continue Shopping</a>
+        </div>
+    <% } %>
+</div>

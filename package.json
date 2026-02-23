@@ -1,0 +1,22 @@
+{
+    "name": "eshop",
+    "private": true,
+    "workspaces": [
+        "domain",
+        "application",
+        "infrastructure",
+        "util",
+        "ui"
+    ],
+    "scripts": {
+        "build": "tsc -b",
+        "ui": "ts-node ui/src/index.ts",
+        "start": "ts-node ui/src/index.ts",
+        "db:up": "docker compose -f db/docker-compose.yml up -d",
+        "db:down": "docker compose -f db/docker-compose.yml down",
+        "db:seed": "ts-node ui/src/seed.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^25.0.1"
+    }
+}

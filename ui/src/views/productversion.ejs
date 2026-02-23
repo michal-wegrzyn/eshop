@@ -1,0 +1,66 @@
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <% if (isLoggedIn) { %>
+            <a href="/orders" style="color: #007bff; text-decoration: none;">Back to Orders</a>
+            <% } else { %>
+            <a href="/products" style="color: #007bff; text-decoration: none;">Back to Products</a>
+            <% } %>
+        </div>
+        <% if (isManager) { %>
+            <div style="color: #666; font-size: 0.9rem;">
+                <p style="margin: 0.25rem 0;">
+                    <strong>Valid From:</strong> <%= new Date(productVersion.validFrom).toLocaleDateString() %>
+                </p>
+                <% if (productVersion.validto) { %>
+                    <p style="margin: 0.25rem 0;">
+                        <strong>Valid To:</strong> <%= new Date(productVersion.validto).toLocaleDateString() %>
+                    </p>
+                <% } else { %>
+                    <p style="margin: 0.25rem 0;">
+                        <strong>Valid To:</strong> Active
+                    </p>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+    <style>
+        @media (max-width: 640px) {
+            .product-version-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        @media (min-width: 641px) {
+            .product-version-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+
+    <div class="product-version-grid">
+        <div>
+            <% if (productVersion.imageUrl) { %>
+                <img src="<%= productVersion.imageUrl %>" alt="<%= productVersion.name %>" style="width: 100%; border-radius: 4px;">
+            <% } else { %>
+                <div style="background-color: #e9ecef; width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #999;">
+                    No image
+                </div>
+            <% } %>
+        </div>
+
+        <div>
+            <h1><%= productVersion.name %></h1>
+            <p style="font-size: 1.5rem; color: #28a745; margin: 1rem 0; font-weight: bold;">
+                <%= (productVersion.price / 100).toFixed(2) %> zł
+            </p>
+            
+            <h3>Description</h3>
+            <p style="color: #555; margin: 1rem 0; white-space: pre-wrap; word-wrap: break-word;"><%= productVersion.description || 'No description available' %></p>
+        </div>
+    </div>
+</div>

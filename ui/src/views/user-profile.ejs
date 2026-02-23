@@ -1,0 +1,89 @@
+<div class="container">
+    <h1>My Profile <span style="color: #aaa" >(#<%= user.id.substring(0,8) %>)</span></h1>
+
+    <div style="max-width: 500px;">
+        <% if (typeof profileMessage !== 'undefined' && profileMessage) { %>
+            <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem;">
+                <%= profileMessage %>
+            </div>
+        <% } %>
+
+        <form action="/user/update" method="POST">
+            <div style="margin-bottom: 1rem;">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="<%= user.username %>" style="width: 100%; padding: 0.5rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label for="oldpassword">Old Password:</label>
+                <input type="password" id="oldpassword" name="oldpassword" placeholder="Leave empty to keep current" style="width: 100%; padding: 0.5rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label for="newpassword">New Password:</label>
+                <input type="password" id="newpassword" name="newpassword" placeholder="New password" style="width: 100%; padding: 0.5rem;">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label for="newpasswordagain">New Password Again:</label>
+                <input type="password" id="newpasswordagain" name="newpasswordagain" placeholder="Enter new password again" style="width: 100%; padding: 0.5rem;">
+            </div>
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+        <form action="/user/logout" method="POST" style="margin-top: 1rem;">
+            <button type="submit" class="btn btn-danger">Log Out</button>
+        </form>
+    </div>
+
+    <% if (typeof allUsers !== 'undefined' && allUsers && userRole === 'manager') { %>
+        <hr style="margin: 2rem 0;">
+        <h2>User Management</h2>
+        
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+                        <th style="padding: 0.75rem; text-align: left;">Username</th>
+                        <th style="padding: 0.75rem; text-align: left;">Role</th>
+                        <th style="padding: 0.75rem; text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% allUsers.forEach(u => { %>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 0.75rem;">
+                                <%= u.username %>
+                                <span style="color: #aaa;">(#<%= u.id.substring(0, 8) %>)</span>
+                                <% if (u.id === user.id) { %>
+                                    <span style="font-weight: bold; color: #0066cc;"> You</span>
+                                <% } %>
+                            </td>
+                            <td style="padding: 0.75rem;">
+                                <span style="display: inline-block; background-color: <%= u.role === 'manager' ? '#d4edda' : '#e2e3e5' %>; padding: 0.25rem 0.5rem; border-radius: 3px; font-size: 0.9em;">
+                                    <%= u.role.charAt(0).toUpperCase() + u.role.slice(1) %>
+                                </span>
+                            </td>
+                            <td style="padding: 0.75rem; text-align: center;">
+                                <form action="/user/<%= u.id %>/role" method="POST" style="display: inline;">
+                                    <input type="hidden" name="role" value="<%= u.role === 'manager' ? 'customer' : 'manager' %>">
+                                    <button type="submit" class="btn btn-danger" style="font-size: 0.85em;" onclick="return confirmRoleChange('<%= u.username %>', '<%= u.role === 'manager' ? 'customer' : 'manager' %>', <%= u.id === user.id ? 'true' : 'false' %>)">
+                                        <%= u.role === 'manager' ? 'Make Customer' : 'Make Manager' %>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <% if(userRole === 'manager') { %>
+        <script>
+            function confirmRoleChange(username, newRole, isCurrentUser) {
+                if (isCurrentUser) {
+                    return confirm(`Are you sure you want to change your own role to ${newRole}? This will affect your permissions.`);
+                } else {
+                    return confirm(`Are you sure you want to change ${username}'s role to ${newRole}?`);
+                }
+            }
+        </script>
+        <% } %>
+    <% } %>
+</div>

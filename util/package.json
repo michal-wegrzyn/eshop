@@ -1,0 +1,12 @@
+{
+    "name": "@eshop/util",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "devDependencies": {
+        "@types/node": "^25.0.1"
+    }
+}

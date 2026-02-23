@@ -1,0 +1,99 @@
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+            <a href="/products" style="color: #007bff; text-decoration: none;">Back to Products</a>
+        </div>
+        <% if (isManager) { %>
+            <div style="display: flex; gap: 0.5rem;">
+                <button onclick="document.getElementById('editForm').style.display='block'" class="btn">Edit</button>
+                <form action="/product/<%= product.id %>/delete" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this product?')">Delete product</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+
+    <style>
+        @media (max-width: 640px) {
+            .product-detail-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        @media (min-width: 641px) {
+            .product-detail-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+
+    <div class="product-detail-grid">
+        <div>
+            <% if (product.imageUrl) { %>
+                <img src="<%= product.imageUrl %>" alt="<%= product.name %>" style="width: 100%; border-radius: 4px;">
+            <% } else { %>
+                <div style="background-color: #e9ecef; width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #999;">
+                    No image
+                </div>
+            <% } %>
+        </div>
+
+        <div>
+            <h1><%= product.name %></h1>
+            <p style="font-size: 1.5rem; color: #28a745; margin: 1rem 0; font-weight: bold;">
+                <%= (product.price / 100).toFixed(2) %> zł
+            </p>
+            
+            <h3>Description</h3>
+            <p style="color: #555; margin: 1rem 0; white-space: pre-wrap; word-wrap: break-word;"><%= product.description || 'No description available' %></p>
+
+            <form action="/cart/update" method="POST" style="margin-bottom: 1rem;">
+                <input type="hidden" name="productId" value="<%= product.id %>">
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="number" name="quantity" value="<% if (cartQty > 0) { %><%= cartQty %><% } else { %>1<% } %>" min="1" style="width: 80px; padding: 0.5rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">
+                        <% if (cartQty > 0) { %>Update Cart<% } else { %>Add to Cart<% } %>
+                    </button>
+                </div>
+            </form>
+            <% if (cartQty > 0) { %>
+                <form action="/cart/update" method="POST">
+                    <input type="hidden" name="productId" value="<%= product.id %>">
+                    <input type="hidden" name="quantity" value="0">
+                    <button type="submit" class="btn btn-danger">Remove from Cart</button>
+                </form>
+                <% } %>
+        </div>
+    </div>
+
+    <% if (isManager) { %>
+        <div id="editForm" style="display: none; margin-top: 2rem; border: 1px solid #ddd; padding: 1rem; border-radius: 4px; background-color: #f9f9f9;">
+            <h3>Edit Product</h3>
+            <form action="/product/<%= product.id %>" method="POST">
+                <div style="margin-bottom: 1rem;">
+                    <label for="editName">Name:</label>
+                    <input type="text" id="editName" name="name" value="<%= product.name %>" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="editPrice">Price (zł):</label>
+                    <input type="number" id="editPrice" name="price" step="0.01" value="<%= (product.price / 100).toFixed(2) %>" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="editDescription">Description:</label>
+                    <textarea id="editDescription" name="description" style="width: 100%; padding: 0.5rem; min-height: 150px;"><%= product.description || '' %></textarea>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="editImageUrl">Image URL:</label>
+                    <input type="text" id="editImageUrl" name="imageUrl" value="<%= product.imageUrl || '' %>" style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" onclick="document.getElementById('editForm').style.display='none'" class="btn" style="background-color: #6c757d;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    <% } %>
+</div>

@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "src",
+        "outDir": "dist",
+        "strict": true,
+        "target": "ES2020",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "typeRoots": ["./node_modules/@types", "./src/types"],
+        "skipLibCheck": true,
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    },
+    "references": [
+        { "path": "../application" },
+        { "path": "../domain" },
+        { "path": "../infrastructure" },
+        { "path": "../util" }
+    ],
+    "include": ["src"]
+}

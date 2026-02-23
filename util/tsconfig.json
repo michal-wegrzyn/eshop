@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "src",
+        "outDir": "dist",
+        "strict": true,
+        "target": "ES2020",
+        "module": "CommonJS",
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    },
+    "include": ["src"]
+}

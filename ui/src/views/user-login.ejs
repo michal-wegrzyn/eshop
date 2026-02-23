@@ -1,0 +1,59 @@
+<div class="container">
+    <% if (typeof loginMessage !== 'undefined' && loginMessage) { %>
+        <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem;">
+            <%= loginMessage %>
+        </div>
+    <% } %>
+    <style>
+        @media (max-width: 640px) {
+            .login-forms-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        @media (min-width: 641px) {
+            .login-forms-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+    <div class="login-forms-grid">
+        <% const returnParams = typeof returnUrl !== 'undefined' ? "?return_url="+returnUrl : ''; %>
+        <div>
+            <h2>Login</h2>
+            <form action=<%= "/user/login" + returnParams %> method="POST">
+                <div style="margin-bottom: 1rem;">
+                    <label for="loginUsername">Username:</label>
+                    <input type="text" id="loginUsername" name="username" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" name="password" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+        </div>
+
+        <div>
+            <h2>Register</h2>
+            <form action=<%= "/user/register" + returnParams %> method="POST">
+                <div style="margin-bottom: 1rem;">
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" id="registerUsername" name="username" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" id="registerPassword" name="password" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="registerPasswordAgain">Password Again:</label>
+                    <input type="password" id="registerPasswordAgain" name="passwordAgain" required style="width: 100%; padding: 0.5rem;">
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
